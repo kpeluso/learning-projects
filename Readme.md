@@ -2,10 +2,12 @@
 
 List from http://www.cplusplus.com/forum/beginner/3473/
 
+To run project from repo root: `sh r.sh p1`
+
 ## Beginner
 
-1. [ ] Write a program which finds the factorial of a number entered by the user. (check for all conditions).
-2. [ ] Develop a program to convert currency X to currency Y and vice versa.
+1. [X] Write a program which finds the factorial of a number entered by the user. (check for all conditions).
+2. [X] Develop a program to convert currency X to currency Y and vice versa.
 3. [ ] Write a program that prints out a triangle from largest to smallest; user inputs the largest number. Eg:
 
 ```
