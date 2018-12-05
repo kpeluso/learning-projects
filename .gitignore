@@ -1,9 +1,6 @@
 target/
 Cargo.lock
 
-# Binary
-main
-
 # Prerequisites
 *.d
 
