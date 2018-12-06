@@ -1,6 +1,6 @@
 [package]
 name = "p2"
 version = "0.1.0"
-authors = ["kpeluso"]
+authors = ["kpeluso <pelusoken@gmail.com>"]
 
 [dependencies]
