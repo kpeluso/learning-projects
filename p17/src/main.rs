@@ -16,36 +16,36 @@ fn concat_ws(s1: String, s2: String) -> String {
     return together
 }
 
+fn format(w: &str) -> String {
+    return w.to_string()
+            .trim()
+            .to_lowercase()
+            .trim_matches(|c| c == ',' || c == '?' || c == '\'' || c == '.')
+            .to_string();
+}
+
 // Help: https://stackoverflow.com/questions/34969902/how-to-write-a-rust-function-that-takes-an-iterator
 fn iter_assign<'a, I>(mut iter: I) -> String
 where
     I: Iterator<Item = &'a str>,
 {
     match iter.next() {
-        Some(w) => return w.to_string().trim().to_lowercase(),
+        Some(w) => return format(w),
         None => panic!("Ended early! File too short!"),
     }
 }
 
 fn ma(s: String, d: std::path::Display) -> HashMap<String, HashMap<String, u32>> {
     println!("\nMarkov Analyzing: {}, which contains:\n\n{}", d, s);
-
     let mut table: HashMap<String, HashMap<String, u32>> = HashMap::new();
     let iter = s.split_whitespace();
     let mut prefix1: String = iter_assign(iter.clone());
     let mut prefix2: String = iter_assign(iter.clone());
     let mut key: String;
     let mut ns: String;
-
     for new_suffix in iter {
         key = concat_ws(prefix1, prefix2.clone());
-
-        ns = new_suffix.to_string()
-                        .trim()
-                        .to_lowercase()
-                        .trim_matches(|c| c == ',' || c == '?' || c == '\'' || c == '.')
-                        .to_string();
-
+        ns = format(new_suffix);
         // update a key, guarding against the key possibly not being set
         let a_row = table.entry(key).or_insert(HashMap::new());
         let stat = a_row.entry(ns.clone()).or_insert(0);
@@ -53,7 +53,6 @@ fn ma(s: String, d: std::path::Display) -> HashMap<String, HashMap<String, u32>>
         prefix1 = prefix2;
         prefix2 = ns.clone();
     }
-
     return table;
 }
 
