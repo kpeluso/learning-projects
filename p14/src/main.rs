@@ -10,7 +10,7 @@ mod mat {
         fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
             write!(f, "[\n")?;
             let vec = &self.vals;
-            for (count, v) in vec.iter().enumerate() {
+            for (count, _) in vec.iter().enumerate() {
                 if count != 0 { write!(f, ", \n")?; }
                 let vec2 = &self.vals[count];
                 write!(f, "    [")?; // 4 spaces
@@ -63,7 +63,7 @@ mod mat {
             if self.shape.1 != m.shape.0 { panic!(".mul() ERROR: self's num columns not equal to arg's num rows!"); }
             let mut ans: Vec<Vec<f64>> = Vec::new();
             let mut r: Vec<f64>;
-            let mut el: f64 = 0.0;
+            let mut el: f64;
             for i in 0..self.shape.0 {
                 r = Vec::new();
                 for j in 0..self.shape.1 {

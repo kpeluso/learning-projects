@@ -45,7 +45,7 @@ If external crates are required, run: `sh r2.sh p6`
 
 12. [ ] Simple file encryption (using something simple like ROT13).
 13. [ ] Read XHTML, remove the tags, then print out the remaining text.
-14. [ ] Write a program which performs addition, subtraction, multiplication of matrices. The dimensions of both the matrices would be specified by the user (dynamic memory allocation required). Use of structure or a class to define the matrix would be a good idea.
+14. [X] Write a program which performs addition, subtraction, multiplication of matrices. The dimensions of both the matrices would be specified by the user (dynamic memory allocation required). Use of structure or a class to define the matrix would be a good idea.
 15. [ ] Create a sophisticated linked list class. You should be able to insert and delete nodes anywhere in the list, and the nodes should have pointers to nodes both in front and behind them.
 16. [ ] Create a command-line todo list with [Clap](https://crates.io/crates/clap). Users should be able to add, complete and delete items. Bonus: use a database (eg SQLite) to persist todo items between program runs.
 
@@ -56,10 +56,13 @@ If external crates are required, run: `sh r2.sh p6`
 19. [ ] Create a Quine, (a program that prints out its own source code).
 
 My Rust resources:
-- https://doc.rust-lang.org/stable/rust-by-example/
-- https://doc.rust-lang.org/book/
-- https://doc.rust-lang.org/cargo/
-- https://crates.io/
+- [play with rust](https://play.rust-lang.org/)
+- [rust by example](https://doc.rust-lang.org/stable/rust-by-example/)
+- [rust book](https://doc.rust-lang.org/book/)
+- [cargo book](https://doc.rust-lang.org/cargo/)
+- [cargo](https://crates.io/)
+- [docstrings 1](https://deterministic.space/machine-readable-inline-markdown-code-cocumentation.html)
+- [docstrings 2](https://docs.rs/docstrings/0.1.1/docstrings/)
 
 Recommended resources for Rust:
 - https://github.com/kud1ing/awesome-rust
