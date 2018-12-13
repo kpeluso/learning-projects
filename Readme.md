@@ -51,7 +51,7 @@ If external crates are required, run: `sh r2.sh p6`
 
 ## Expert
 
-17. [ ] Make a Markov chain generator. Read text from a source, create a histogram and allow different prefix lengths. See [Think Python](http://greenteapress.com/thinkpython2/html/thinkpython2014.html#sec159) for info.
+17. [X] Make a Markov chain generator. Read text from a source, create a histogram and allow different prefix lengths. See [Think Python](http://greenteapress.com/thinkpython2/html/thinkpython2014.html#sec159) for info.
 18. [ ] Create a binary tree which has search and sorting functions.
 19. [ ] Create a Quine, (a program that prints out its own source code).
 
