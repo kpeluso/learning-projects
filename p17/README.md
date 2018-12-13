@@ -4,7 +4,7 @@
 
 Run script:
 
-`clear; cd $1/src/ ; cargo build ; cargo run ; cd .. ; cd ..`
+`cargo build ; cargo run`
 
 ## TODO
 
