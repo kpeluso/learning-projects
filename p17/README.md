@@ -1,4 +1,4 @@
-# Markov Eng
+# Markov Generator
 
 > by Kenny Peluso
 
