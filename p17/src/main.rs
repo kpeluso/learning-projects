@@ -3,6 +3,9 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
 use std::collections::HashMap;
+use std::option::Option;
+
+mod samp;
 
 fn normalize_dict(dref: &HashMap<String, HashMap<String, f64>>) -> HashMap<String, HashMap<String, f64>> {
     let mut table: HashMap<String, HashMap<String, f64>> = HashMap::new();
@@ -47,29 +50,16 @@ fn format(w: &str) -> String {
             .to_string();
 }
 
-// Help: https://stackoverflow.com/questions/34969902/how-to-write-a-rust-function-that-takes-an-iterator
-fn iter_assign<'a, I>(mut iter: I) -> String
-where
-    I: Iterator<Item = &'a str>,
-{
-    match iter.next() {
-        Some(w) => return format(w),
-        None => panic!("Ended early! File too short!"),
-    }
-}
-
 // pl == any u32
 fn ma_var(s: String, d: std::path::Display, pl: u32) -> HashMap<String, HashMap<String, f64>> {
     println!("\nMarkov Analyzing: {}, which contains:\n\n{}", d, s);
     if (s.len() as u32) < pl+1 { panic!("File text is not long enough (or prefix length is too long)!"); }
     let mut table: HashMap<String, HashMap<String, f64>> = HashMap::new();
-    let iter = s.split_whitespace();
+    let mut iter = s.split_whitespace();
     let mut prefixes: Vec<String> = Vec::new();
     let mut new_prefixes: Vec<String> = Vec::new();
     let mut content: String;
-    for _ in 0..pl {
-        prefixes.push(iter_assign(iter.clone()));
-    }
+    for _ in 0..pl { prefixes.push(Option::unwrap(iter.next()).to_string()); }
     let mut key: String;
     let mut ns: String;
     for new_suffix in iter {
@@ -90,46 +80,34 @@ fn ma_var(s: String, d: std::path::Display, pl: u32) -> HashMap<String, HashMap<
     return table;
 }
 
-// pl == 2
-fn ma(s: String, d: std::path::Display) -> HashMap<String, HashMap<String, f64>> {
-    println!("\nMarkov Analyzing: {}, which contains:\n\n{}", d, s);
-    let mut table: HashMap<String, HashMap<String, f64>> = HashMap::new();
-    let iter = s.split_whitespace();
-    let mut prefix1: String = iter_assign(iter.clone());
-    let mut prefix2: String = iter_assign(iter.clone());
-    let mut key: String;
-    let mut ns: String;
-    for new_suffix in iter {
-        key = concat_ws(prefix1, prefix2.clone());
-        ns = format(new_suffix);
-        // update a key, guarding against the key possibly not being set
-        let a_row = table.entry(key).or_insert(HashMap::new());
-        let stat = a_row.entry(ns.clone()).or_insert(0.0);
-        *stat += 1.0;
-        prefix1 = prefix2;
-        prefix2 = ns.clone();
+fn write_once(sref: &String, dref: &HashMap<String, HashMap<String, f64>>) -> String {
+    match dref.get(sref) {
+        Some(row) => return samp::categorical(&row),
+        None => panic!("{} is not in the Markov dictionary!", sref.to_string()),
     }
-    return table;
 }
 
-fn write_once(s: String, dref: &HashMap<String, HashMap<String, f64>>) -> String {
-    match dref.get(&s) {
-        Some(row) => {
-            println!("Sample from categorical distribution, `row`");
-        },
-        None => println!("{} is not in the Markov dictionary!", s),
+fn vslice_2_prefix(v: Vec<String>, c: u32, pl: u32) -> String {
+    if v.len() == 0_usize || pl == 0_u32 { return "".to_string(); }
+    let mut output: String = (&v[c as usize]).to_string();
+    for i in (1+c)..(pl+c) {
+        output = concat_ws(output, (&v[i as usize]).to_string());
     }
-    return "NOT FINISHED".to_string();
+    return output
 }
 
-fn write(n: u32, seed: String, dref: &HashMap<String, HashMap<String, f64>>) -> () {
-    let mut c: u32 = n;
-    let mut s: String = seed;
-    while c > 0 {
-        print!("{} ", s);
-        s = write_once(s, dref);
-        c -= 1;
+fn write(n: u32, seed: String, dref: &HashMap<String, HashMap<String, f64>>, pl: u32) {
+    let mut c: u32 = 0;
+    let mut iter = seed.split_whitespace();
+    let mut words: Vec<String> = Vec::new();
+    for _ in 0..pl { words.push(Option::unwrap(iter.next()).to_string()); }
+    let mut idk: String;
+    while c < (n-pl) {
+        idk = vslice_2_prefix(words.clone(), c, pl);
+        words.push(write_once(&idk, dref));
+        c += 1;
     }
+    print!("\nGenerated {}-word text:\n{}\n", n, concat_ws_vec(words));
 }
 
 fn main() {
@@ -138,7 +116,8 @@ fn main() {
     let pl: u32 = 3; // prefix length
 
     // Create a path to the desired file
-    let path = Path::new("p17/src/text.txt");
+    /* let path = Path::new("p17/src/text.txt"); */ // without compilation with external crate
+    let path = Path::new("text.txt"); // with compilation with external crate
     let display = path.display();
 
     // Open the path in read-only mode, returns `io::Result<File>`
@@ -154,14 +133,6 @@ fn main() {
         Err(why) => panic!("couldn't read {}: {}", display, why.description()),
         Ok(_) => ma_var(s, display, pl),
     };
-
-    //
-    // [ √ ] normalize_dict()
-    // [ √ ] Variable prefix length - FIFO queue instead of pre/suffix variables
-    // [   ] autogenerate words
-    //          - start with random prefix from returned dict `m`
-    //          - sample from dict row's distribution and repeat
-    //
 
     match m.get("the bee") {
         Some(row) => {
@@ -197,14 +168,12 @@ fn main() {
 
     // generate a narrative with given data
     let seed: String;
-    for (prefix, row) in &q {
+    for (prefix, _) in &q {
         seed = prefix.to_string();
         println!("The seed is: '{}'", prefix);
-        break; // just seed with first prefix
+        write(steps, seed, &q, pl);
+        break;
     }
-    //
-    // write(steps, seed, &q);
-    //
 
     // `file` goes out of scope, and the "text.txt" file gets closed
 }
